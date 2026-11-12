@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-catalog = json.loads((root / 'skills/catalog/catalog.json').read_text())
+catalog = json.loads((root / 'skills/catalog/catalog.json').read_text(encoding='utf-8'))
 expected = {}
 for item in catalog['items']:
     download = item.get('download', {})

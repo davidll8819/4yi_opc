@@ -52,7 +52,7 @@ def main():
         parser.error('Output must be a new file outside the project')
     tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().split('\0')
     names = set(filter(None, tracked)) | set(EXTRA)
-    catalog = json.loads((ROOT / 'skills/catalog/catalog.json').read_text())
+    catalog = json.loads((ROOT / 'skills/catalog/catalog.json').read_text(encoding='utf-8'))
     expected = {}
     for item in catalog['items']:
         download = item.get('download', {})
