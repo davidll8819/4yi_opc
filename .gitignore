@@ -43,3 +43,21 @@ outputs/
 docs/*-evidence-*/
 docs/verification/
 design/characters/*.zip
+
+# Local caches and character-generation history are not published source.
+.nx/
+.vite/
+.claude-session/
+.aws/
+.ssh/
+*.part
+*.part[0-9]*
+RESTORE-KEY.json
+operations-config.key
+design/characters/**/history/
+design/characters/**/concepts/
+design/characters/**/batch-results*.json
+design/characters/**/*generation*.json
+design/characters/**/roster-motion-results.json
+design/characters/compact-v2-2026-11-03/
+design/characters/female-v3-2026-11-03/

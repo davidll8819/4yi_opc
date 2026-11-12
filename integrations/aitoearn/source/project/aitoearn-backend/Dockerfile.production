@@ -1,0 +1,26 @@
+FROM node:24-bookworm-slim AS build
+WORKDIR /source
+RUN npm install --global pnpm@10.33.0
+COPY . .
+RUN printf 'registry=https://registry.npmjs.org/\nauto-install-peers=true\nshamefully-hoist=true\n' > .npmrc
+RUN pnpm install --frozen-lockfile --ignore-scripts
+ENV CI=1 NX_DAEMON=false NX_TUI=false NX_NO_CLOUD=true NX_ISOLATE_PLUGINS=false NX_WORKSPACE_DATA_DIRECTORY=/tmp/nx-data
+RUN pnpm exec nx run-many -t build -p aitoearn-ai aitoearn-server --parallel=2
+RUN node scripts/prepare-production.mjs /runtime
+
+FROM node:24-bookworm-slim AS dependencies
+WORKDIR /runtime
+RUN npm install --global pnpm@10.33.0
+COPY --from=build /runtime/ ./
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+
+FROM node:24-bookworm-slim AS production
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates ffmpeg fonts-noto-cjk && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --from=dependencies --chown=node:node /runtime/ ./
+RUN mkdir -p /work && chown node:node /work
+COPY --chown=node:node scripts/start-production.mjs /app/start-production.mjs
+USER node
+WORKDIR /work
+ENV NODE_ENV=production VIDEO_SERVICE=ai VIDEO_CONFIG=/run/wishtaday/video.yaml
+ENTRYPOINT ["node", "/app/start-production.mjs"]

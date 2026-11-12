@@ -25,3 +25,34 @@ outputs
 docs/*-evidence-*/
 
 integrations/aitoearn/source
+
+# Machine state, development caches and local exports must never enter an image.
+**/.nx
+**/.vite
+**/__pycache__
+**/.DS_Store
+**/*.tsbuildinfo
+**/*.backup
+**/*.db
+**/*.db-*
+**/*.sqlite
+**/*.sqlite3
+**/*.sqlite-*
+**/*.rdb
+**/*.aof
+**/*.part
+**/*.part[0-9]*
+**/*.tfstate*
+**/*.tfvars
+**/*.tfplan
+**/backend.hcl
+**/operations-config.key
+coverage
+playwright-report
+test-results
+docs/verification
+.superpowers
+.terraform
+
+# Design originals stay on the developer machine; live artwork is in apps/web/public.
+design

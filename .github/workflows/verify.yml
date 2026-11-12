@@ -1,0 +1,49 @@
+name: Verify Windows and Linux
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --include=optional
+      - run: node scripts/windows-local.mjs check
+      - run: npm test
+      - run: npm run lint
+      - run: npm run build
+      - name: Build production container (Linux)
+        if: runner.os == 'Linux'
+        run: docker build --tag wishtaday:ci .
+      - name: Fresh PostgreSQL and Redis startup (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          node scripts/setup-local.mjs
+          docker compose -p wishtaday-local up -d --wait
+          node --env-file=.env scripts/bootstrap-local.mjs
+          node scripts/local-process.mjs start
+          node scripts/local-smoke.mjs
+          node scripts/local-process.mjs stop
+          cp .local/accounts.json .local/accounts-before.json
+          node --env-file=.env scripts/bootstrap-local.mjs
+          cmp .local/accounts-before.json .local/accounts.json
+          docker compose -p wishtaday-local exec -T postgres pg_dump -U office_admin -d office --format=custom --no-owner --no-acl --file=/tmp/transfer.dump
+          docker compose -p wishtaday-local exec -T postgres createdb -U office_admin office_restore_check
+          docker compose -p wishtaday-local exec -T postgres pg_restore -U office_admin -d office_restore_check --no-owner --no-acl --single-transaction --exit-on-error /tmp/transfer.dump
+          restored=$(docker compose -p wishtaday-local exec -T postgres psql -U office_admin -d office_restore_check -Atc 'SELECT count(*) FROM users')
+          test "$restored" = '2'
+      - name: Stop isolated CI containers
+        if: always() && runner.os == 'Linux'
+        run: docker compose -p wishtaday-local stop
