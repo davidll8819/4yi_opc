@@ -34,7 +34,30 @@ apps/web/public 中。源码包保留受版本管理的设计文件，以支持�
 
 此包是源码交付包，并非已经启动成功的云端安装。数据库、缓存、视频服务及平台身份
 认证仍需在服务器分别接通。当前主 Docker 镜像不打包 AiToEarn 独立服务。
-GitHub 导入不会携带本机忽略的技能 ZIP；如走 GitHub 发布，需要另行提供这些已校验的
-公共技能包，或在构建流程下载并校验，否则部分内置技能会提示安装包缺失。
+新的发布仓库为 https://github.com/davidll8819/4yi_opc ，使用 main 分支。
+当前目录需要的 102 个公共技能 ZIP 已纳入该仓库，CI 会检查全部校验值；不依赖
+上游 HEAD 下载地址重新获取，以免技能内容发生变化。新增归档应先完成校验并明确
+加入发布清单，不要顺带提交其他本机 ZIP。
+
+## 独立视频 Linux 镜像
+
+在仓库根目录构建：
+
+```sh
+docker build -f integrations/aitoearn/source/project/aitoearn-backend/Dockerfile.production -t wishtaday-video:local integrations/aitoearn/source/project/aitoearn-backend
+```
+
+采用 Node.js 24 和 pnpm 10.33.0，按锁定文件构建，再仅安装生产依赖。
+同一镜像分别以 VIDEO_SERVICE=ai 和 VIDEO_SERVICE=server 启动两个服务；
+VIDEO_CONFIG 必须指向挂载的绝对配置路径，工作目录 /work 用于独立运行文件。
+镜像自带 FFmpeg 和中文字体，不携带真实配置或用户数据。
+
+已经验证：两个后台及 15 个依赖模块的 Linux 编译、两个应用入口加载、Sharp 图片处理、
+H.264/AAC 测试视频编码；主应用 Windows/Linux 回归和主镜像构建也已通过。
+尚未验证：完整 Linux 服务启动与数据库、缓存、私有对象存储的联调，真实模型生成及
+新用户从注册到成片的完整云端流程。视频服务 /health 在当前企业模式下需要身份认证，
+平台的健康探测方式也需要适配，不能把入口加载检查当成已通过线上健康检查。
+
+当前 4yi-app.json 只声明 web；本次没有修改平台后台、自动发布镜像或创建付费云资源。
 
 清理缓存不会修复云平台的 CPU／内存调度不足；这两项要分别处理。

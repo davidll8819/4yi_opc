@@ -16,4 +16,6 @@
 
 将来安装模块根据稳定 ID 查表，验证压缩包校验码和安全路径，再提取所选技能并登记到企业；本次没有实现或启动该过程。
 
-ZIP 文件保留在本机并忽略 Git 提交，备份或迁移时需连同 `catalog` 一起复制。运行 `python3 scripts/verify-skill-catalog.py` 可复核目录与下载包的对应关系。
+当前目录需要的 102 个公共 ZIP 已在 4yi_opc 发布仓库纳入版本管理，并在 .gitignore 中逐项放行。
+其他 ZIP 继续默认忽略。运行 `python3 scripts/verify-release-skills.py` 验证发布包完整性；
+运行 `python3 scripts/verify-skill-catalog.py` 可进一步复核目录与技能文件的对应关系。

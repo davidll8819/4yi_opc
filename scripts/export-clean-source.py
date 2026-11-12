@@ -15,7 +15,14 @@ import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-EXTRA = ('scripts/export-clean-source.py', 'docs/clean-server-install.md')
+EXTRA = (
+    'scripts/export-clean-source.py', 'docs/clean-server-install.md',
+    'scripts/verify-release-skills.py', '.github/workflows/video-linux.yml',
+    'integrations/aitoearn/source/project/aitoearn-backend/Dockerfile.production',
+    'integrations/aitoearn/source/project/aitoearn-backend/Dockerfile.production.dockerignore',
+    'integrations/aitoearn/source/project/aitoearn-backend/scripts/prepare-production.mjs',
+    'integrations/aitoearn/source/project/aitoearn-backend/scripts/start-production.mjs',
+)
 PRIVATE_PARTS = {'.local', '.git', '.secrets', '.aws', '.ssh', '.claude-session',
                  'node_modules', 'outputs', '.taste-skill', '.nx', '.vite',
                  'playwright-report', 'test-results', '__pycache__'}

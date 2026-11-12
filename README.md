@@ -1,5 +1,17 @@
 # Wishtaday · AI Office
 
+## 4yi 发布仓库（2026-11-12）
+
+当前发布源码仓库为 https://github.com/davidll8819/4yi_opc ，分支为 `main`。
+本仓库保存程序、正式素材、依赖锁定文件及当前目录需要的 102 个公共技能归档；
+不包含个人 Key、本机数据库、聊天、任务、成片或运行缓存。
+后面的早期记录仅供历史参考，以本节和 [全新服务器说明](docs/clean-server-install.md) 为准。
+
+主程序镜像及独立 Linux 视频生产镜像已通过 GitHub Actions 构建和组件检查。
+这不等于已完成 4yi 云端上线：当前 `4yi-app.json` 仍只声明主服务，独立视频服务、
+数据库、缓存、存储、身份配置及平台资源调度仍需接通，并验证完整业务流程。
+更新源码应保留服务器独立数据卷和数据库，不恢复开发机业务数据、不重建用户密钥。
+
 ## Windows 本机进展（2026-10-19）
 
 现有智能体弹窗已接入程序部项目执行与交付、资料室文档解析/OCR/比对/归档问答，以及叶凡的独立制作服务。办公室动画保持原样。
@@ -12,7 +24,7 @@
 
 ## Windows 下载与使用
 
-办公室 Windows 用户先看 [Windows 从这里开始](WINDOWS-开始使用.md)，完整步骤见 [安装与 Mac 数据迁移说明](docs/WINDOWS-SETUP.md)。从 [Releases](https://github.com/davidll8819/ops/releases) 下载完整包，可获得代码和 600 项目录对应的 149 个技能归档；GitHub 自动源码 ZIP 不含技能归档。安装 Node.js 24 和 Docker Desktop 后，双击 `Setup-Windows.cmd` 安装、`Start-Windows.cmd` 启动。迁移旧数据须在首次启动前恢复私有备份。
+办公室 Windows 用户先看 [Windows 从这里开始](WINDOWS-开始使用.md)，完整步骤见 [安装与 Mac 数据迁移说明](docs/WINDOWS-SETUP.md)。从当前仓库获取源码，已包含当前目录需要的 102 个公共技能归档。安装 Node.js 24 和 Docker Desktop 后，双击 `Setup-Windows.cmd` 安装、`Start-Windows.cmd` 启动。只有明确需要迁移旧数据时才恢复私有备份；全新服务器不执行恢复操作。
 
 ## 最新入口（2026-10-12）
 
