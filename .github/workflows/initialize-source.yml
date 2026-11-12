@@ -1,0 +1,36 @@
+name: Initialize verified source snapshot
+on:
+  push:
+    paths: ['.github/workflows/initialize-source.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    if: github.repository == 'davidll8819/4yi_opc'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: destination
+      - uses: actions/checkout@v4
+        with:
+          repository: davidll8819/ops
+          ref: b1fae0c390527ace1bd8571ad381b936a53397ac
+          path: approved-source
+          persist-credentials: false
+      - name: Import source files without local data or previous history
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -e destination/package.json; then
+            echo "Source already initialized; no files changed."
+            exit 0
+          fi
+          git -C approved-source archive HEAD | tar -x -C destination
+          cd destination
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit --quiet -m "chore: initialize verified Wishtaday source snapshot"
+          git push origin HEAD:main
