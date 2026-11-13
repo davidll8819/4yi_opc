@@ -1,5 +1,6 @@
-import { readFile, realpath, stat } from 'node:fs/promises'
-import { resolve, sep } from 'node:path'
+import { loadSkillPackage } from './skill-download.mjs'
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import yazl from 'yazl'
@@ -16,7 +17,7 @@ const safePath = (path) =>
   path.split('/').every((p) => p && p !== '.' && p !== '..')
 let active = 0
 
-export async function prepareCatalogSkill(id, { root = projectRoot, catalog } = {}) {
+export async function prepareCatalogSkill(id, { root = projectRoot, catalog, fetchImpl } = {}) {
   if (active >= 2) throw fail(429, '已有技能正在安装，请稍后再试')
   active++
   try {
@@ -32,17 +33,7 @@ export async function prepareCatalogSkill(id, { root = projectRoot, catalog } = 
       !(d.skillRoot === '.' || safePath(d.skillRoot))
     )
       throw fail(409, '技能文件对应关系无效，请重新核对目录')
-    const allowed = await realpath(resolve(root, 'skills/packages'))
-    let archivePath
-    try {
-      archivePath = await realpath(resolve(root, d.packagePath))
-    } catch {
-      throw fail(409, '本地技能包缺失，请恢复下载文件')
-    }
-    if (!archivePath.startsWith(allowed + sep) || (await stat(archivePath)).size > 64 * 1024 * 1024)
-      throw fail(409, '技能包路径或大小不符合要求')
-    const bytes = await readFile(archivePath)
-    if (digest(bytes) !== d.sha256) throw fail(409, '技能包校验失败，请重新下载对应文件')
+    const bytes = await loadSkillPackage(d, { root, fetchImpl })
     const prefix = d.skillRoot === '.' ? '' : d.skillRoot + '/'
     if (d.skillFile !== prefix + 'SKILL.md') throw fail(409, '技能文件对应关系无效，请重新核对目录')
     const repositoryRoot = d.skillFile.includes('/') ? d.skillFile.split('/')[0] + '/' : ''

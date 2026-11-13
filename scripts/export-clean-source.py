@@ -51,7 +51,9 @@ def main():
     if output.is_relative_to(ROOT) or output.exists():
         parser.error('Output must be a new file outside the project')
     tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().split('\0')
-    names = set(filter(None, tracked)) | set(EXTRA)
+    names = {n for n in tracked if n and not (n.startswith('skills/packages/') and n.endswith('.zip'))} | set(EXTRA)
+    names.add('apps/api/src/skill-download.mjs')
+    names.add('tests/skill-download.test.mjs')
     catalog = json.loads((ROOT / 'skills/catalog/catalog.json').read_text(encoding='utf-8'))
     expected = {}
     for item in catalog['items']:
@@ -65,7 +67,8 @@ def main():
         if name in expected and expected[name] != digest:
             raise ValueError('Conflicting skill package checksums')
         expected[name] = digest
-        names.add(name)
+        if not download.get('sources'):
+            names.add(name)
     # Validate the full input list before creating an archive.
     for name in names:
         if not checked_path(name).is_file():

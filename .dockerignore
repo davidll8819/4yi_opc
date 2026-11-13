@@ -56,3 +56,6 @@ docs/verification
 
 # Design originals stay on the developer machine; live artwork is in apps/web/public.
 design
+
+# Public skill archives are fetched and verified only when installed.
+skills/packages/*.zip

@@ -1180,5 +1180,7 @@
   "本机技能包校验失败，请管理员恢复原始安装包后刷新页面。": "Local package checksum failed. Ask an administrator to restore the original package and refresh.",
   "显示暂不常用的技能": "Show less frequently used skills",
   "已合并重复来源：": "Merged duplicate sources: ",
-  "下载视频": "Download video"
+  "下载视频": "Download video",
+  "可安装": "Available to install",
+  "可安装 · 未安装": "Available · Not installed"
 }

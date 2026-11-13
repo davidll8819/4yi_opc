@@ -21,6 +21,7 @@ type Skill = {
   descriptionBasis: string
   download: {
     status: 'downloaded' | 'failed'
+    remote?: boolean
     packagePath?: string
     skillFile?: string
     sha256?: string
@@ -293,7 +294,7 @@ export function SkillCatalog({
             }}
           >
             <option value="">{t('全部状态')}</option>
-            <option value="downloaded">{t('本机可用')}</option>
+            <option value="downloaded">{t('可安装')}</option>
             <option value="failed">{t('待补齐')}</option>
           </select>
         </label>
@@ -353,7 +354,7 @@ export function SkillCatalog({
                       skill.installedId
                         ? '已安装'
                         : skill.download.status === 'downloaded'
-                          ? '本机可用 · 未安装'
+                          ? '可安装 · 未安装'
                           : '待补齐',
                     )}
                   </span>
@@ -433,7 +434,7 @@ export function SkillCatalog({
                 selected.installedId
                   ? '已安装'
                   : selected.download.status === 'downloaded'
-                    ? '本机可用 · 未安装'
+                    ? '可安装 · 未安装'
                     : '待补齐',
               )}
             </dd>

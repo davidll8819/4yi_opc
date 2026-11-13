@@ -1,9 +1,10 @@
 # Wishtaday · AI Office
 
-## 4yi 发布仓库（2026-11-12）
+## 4yi 发布仓库（2026-11-13）
 
 当前发布源码仓库为 https://github.com/davidll8819/4yi_opc ，分支为 `main`。
-本仓库保存程序、正式素材、依赖锁定文件及当前目录需要的 102 个公共技能归档；
+本仓库保存程序、正式素材、依赖锁定文件及技能目录；102 个公共技能包按需下载，
+不随主程序分发。固定快照保留在历史提交中，主线路失败自动尝试 GitHub 文件接口；
 不包含个人 Key、本机数据库、聊天、任务、成片或运行缓存。
 后面的早期记录仅供历史参考，以本节和 [全新服务器说明](docs/clean-server-install.md) 为准。
 
@@ -77,7 +78,7 @@
                                └─ AWS AgentCore：共享 Harness + 每次调用的 profile
 ```
 
-云端在入口增加 CloudFront CDN（静态资源就近缓存），业务进入香港 ECS Fargate ARM 容器。RDS PostgreSQL 和 ElastiCache Redis 位于私有网络。Cognito 管理云端账户。AgentCore 和记忆位于 us-west-2，可改 us-east-2，禁止香港。
+云端在入口增加 CloudFront GitHub 文件接口（静态资源就近缓存），业务进入香港 ECS Fargate ARM 容器。RDS PostgreSQL 和 ElastiCache Redis 位于私有网络。Cognito 管理云端账户。AgentCore 和记忆位于 us-west-2，可改 us-east-2，禁止香港。
 
 ## 文件结构
 

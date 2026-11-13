@@ -1,3 +1,4 @@
+import { hasRemoteSkill } from './skill-download.mjs'
 import { readFile, realpath, stat } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { createHash } from 'node:crypto'
@@ -84,17 +85,20 @@ export async function readSkillCatalog({ root = projectRoot, catalog: supplied }
         download: {
           status:
             download.status === 'downloaded' &&
-            !local.get(download.packagePath)?.error &&
-            local.get(download.packagePath)?.sha256 === download.sha256
+            (hasRemoteSkill(download) ||
+              (!local.get(download.packagePath)?.error &&
+                local.get(download.packagePath)?.sha256 === download.sha256))
               ? 'downloaded'
               : 'failed',
+          remote: hasRemoteSkill(download),
           packagePath: download.packagePath,
           skillFile: download.skillFile,
           sha256: download.sha256,
           packageBytes: download.packageBytes,
           historical: download.historical || false,
-          error:
-            download.status === 'failed'
+          error: hasRemoteSkill(download)
+            ? undefined
+            : download.status === 'failed'
               ? '技能来源暂不可用或未能对应原文'
               : local.get(download.packagePath)?.error ||
                 (local.get(download.packagePath)?.sha256 !== download.sha256
