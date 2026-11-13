@@ -34,11 +34,11 @@ node deploy/4yi/provision-secrets.mjs .secrets/4yi /安全位置/operations-conf
 不可对已有数据库重新生成密码或主密钥；Postgres 卷初始化后不会自动接受新 POSTGRES_PASSWORD。
 叶证书有效期一年，提前使用原 CA 续签并更新两个服务的证书 Secret，不能靠重启生成新 CA。
 
-将 secrets.json 的字段分别安全绑定到 4yi-app.json 中同名环境变量引用的 secret:*：
+将 secrets.json 的字段分别安全绑定到 deploy/4yi/secret-bindings.json 中同名环境变量引用的 secret:*：
 APP_DB_PASSWORD、POSTGRES_PASSWORD、REDIS_PASSWORD、OPERATIONS_CONFIG_KEY、
 INTERNAL_CA_CERT_B64、POSTGRES_TLS_CERT_B64、POSTGRES_TLS_KEY_B64、
 REDIS_TLS_CERT_B64、REDIS_TLS_KEY_B64。
-配置声明中的引用不等于秘密值已存入平台；若导入器未保留 secrets 字段，必须在 Proposal manifest.services 对应服务补齐这些映射。
+配置声明中的引用不等于秘密值已存入平台；4yi-app.json 的严格校验不接受 secrets 字段。导入后必须在 Proposal manifest.services 对应服务补齐 secret-bindings.json 中的 secrets 映射；不要把整个文件覆盖到 Proposal，也不要把实际秘密值写入仓库。
 
 4YI 继续注入 FOURYI_ROUTER_IDENTITY_KEY、XCLAW_APP_HOSTNAME。
 固定 slug 为 ai-office-saas，内部 DNS 为 ai-office-saas-postgres / ai-office-saas-redis，沿用 Shannon 的 appSlug-service 命名。
