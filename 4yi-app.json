@@ -3,7 +3,7 @@
   "services": [
     {
       "name": "web",
-      "dockerfile": "Dockerfile",
+      "dockerfile": "deploy/4yi/web.Dockerfile",
       "context": ".",
       "route": "public",
       "port": 3000,
@@ -11,10 +11,83 @@
       "env": {
         "AUTH_MODE": "4yi",
         "FOURYI_ROUTER_IDENTITY_REQUIRED": "1",
-        "FOURYI_PORTAL_ORIGIN": "https://xclaw-dev.bieases.com"
+        "FOURYI_PORTAL_ORIGIN": "https://xclaw-dev.bieases.com",
+        "PGHOST": "ai-office-saas-postgres",
+        "PGPORT": "5432",
+        "PGDATABASE": "office",
+        "PGUSER": "office_app",
+        "PGSSLROOTCERT": "/tmp/office-tls/ca.crt",
+        "NODE_EXTRA_CA_CERTS": "/tmp/office-tls/ca.crt",
+        "REDIS_HOST": "ai-office-saas-redis",
+        "NODE_OPTIONS": "--max-old-space-size=1024"
       },
-      "storage": { "sizeGb": 20, "mountPath": "/app/.local", "fsGroup": 1000 },
-      "resources": { "cpu": 2, "memoryMb": 4096 }
+      "storage": {
+        "sizeGb": 20,
+        "mountPath": "/app/.local",
+        "fsGroup": 1000
+      },
+      "resources": {
+        "cpu": 0.5,
+        "memoryMb": 1536
+      },
+      "type": "web",
+      "secrets": {
+        "APP_DB_PASSWORD": "secret:app-db-password",
+        "POSTGRES_PASSWORD": "secret:postgres-password",
+        "REDIS_PASSWORD": "secret:redis-password",
+        "INTERNAL_CA_CERT_B64": "secret:internal-ca-cert-b64",
+        "OPERATIONS_CONFIG_KEY": "secret:operations-config-key"
+      }
+    },
+    {
+      "name": "postgres",
+      "type": "postgres",
+      "imageSource": "build",
+      "context": ".",
+      "dockerfile": "deploy/4yi/postgres.Dockerfile",
+      "route": "internal",
+      "port": 5432,
+      "env": {
+        "POSTGRES_DB": "office",
+        "POSTGRES_USER": "office_admin",
+        "PGDATA": "/var/lib/postgresql/data/pgdata"
+      },
+      "secrets": {
+        "POSTGRES_PASSWORD": "secret:postgres-password",
+        "POSTGRES_TLS_CERT_B64": "secret:postgres-tls-cert-b64",
+        "POSTGRES_TLS_KEY_B64": "secret:postgres-tls-key-b64"
+      },
+      "storage": {
+        "sizeGb": 20,
+        "mountPath": "/var/lib/postgresql/data"
+      },
+      "resources": {
+        "cpu": 0.5,
+        "memoryMb": 1536
+      }
+    },
+    {
+      "name": "redis",
+      "type": "redis",
+      "imageSource": "build",
+      "context": ".",
+      "dockerfile": "deploy/4yi/redis.Dockerfile",
+      "route": "internal",
+      "port": 6379,
+      "env": {},
+      "secrets": {
+        "REDIS_PASSWORD": "secret:redis-password",
+        "REDIS_TLS_CERT_B64": "secret:redis-tls-cert-b64",
+        "REDIS_TLS_KEY_B64": "secret:redis-tls-key-b64"
+      },
+      "storage": {
+        "sizeGb": 5,
+        "mountPath": "/data"
+      },
+      "resources": {
+        "cpu": 0.5,
+        "memoryMb": 1536
+      }
     }
   ]
 }
